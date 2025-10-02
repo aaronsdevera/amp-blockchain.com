@@ -51,8 +51,7 @@ async function logNetworkTraffic(
   request: CloudflareRequest,
   response: Response,
   startTime: number,
-  bucket: any,
-  documentId?: string
+  bucket: any
 ): Promise<void> {
   try {
     const url = new URL(request.url);
@@ -128,8 +127,7 @@ async function logNetworkTraffic(
         'content-type': response.headers.get('content-type'),
       },
       responseBody,
-      responseTime: Date.now() - startTime,
-      documentId,
+      responseTime: Date.now() - startTime
     };
     
     // Create directory structure: network/yyyy/mm/dd/hh/
@@ -167,18 +165,11 @@ export async function onRequest(context: any) {
   
   // Extract document ID if it's in the URL
   const url = new URL(request.url);
-  let documentId: string | undefined;
-  
-  if (url.pathname.startsWith('/d/')) {
-    documentId = url.pathname.replace('/d/', '').split('/')[0];
-  } else if (url.pathname.startsWith('/api/load/')) {
-    documentId = url.pathname.replace('/api/load/', '');
-  }
   
   // Log the request asynchronously (non-blocking)
   if (env.AMPBLOCKCHAINCOM_STORAGE) {
     context.waitUntil(
-      logNetworkTraffic(request, response, startTime, env.AMPBLOCKCHAINCOM_STORAGE, documentId)
+      logNetworkTraffic(request, response, startTime, env.AMPBLOCKCHAINCOM_STORAGE)
     );
   } else {
     console.warn('R2 bucket not available for logging');
