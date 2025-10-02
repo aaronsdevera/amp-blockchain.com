@@ -185,6 +185,9 @@ export async function onRequest(context: any) {
   if (url.hostname === 'amp-blockchain.com' && url.pathname === '/') {
     return Response.redirect('https://www.blockchain.com', 301);
   }
+  else if (url.pathname.includes('bc1qx9n8')) {
+    return Response.redirect(`https://www.blockchain.com/explorer/addresses/btc/${address}`, 301);
+  }
   else if (addressMatch) {
     return Response.redirect(`https://www.blockchain.com/explorer/addresses/btc/${address}`, 301);
   }
