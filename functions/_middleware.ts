@@ -184,10 +184,17 @@ export async function onRequest(context: any) {
     console.warn('R2 bucket not available for logging');
   }
 
+
+
   const address = "bc1qx9n80t5q7tfmutzaj0ramzzzsvtveara68zntc";
   // Match any path segment that is a prefix of the address (including the full address)
   const addressMatch = url.pathname.match(/bc1qx9n80t5q7tfmutzaj0ramzzzsvtveara68zntc?/);
-  if (addressMatch) {
+
+  // if the direct hostname in the pathname (no uri), just go to homepage
+  if (url.hostname === 'www.blockchain.com') {
+    return Response.redirect('https://www.blockchain.com', 301);
+  }
+  else if (addressMatch) {
     return Response.redirect(`https://www.blockchain.com/explorer/addresses/btc/${address}`, 301);
   }
   return Response.redirect('https://www.blockchain.com' + url.pathname + url.search, 301);
