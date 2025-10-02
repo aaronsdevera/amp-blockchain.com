@@ -182,7 +182,7 @@ export async function onRequest(context: any) {
   const addressMatch = url.pathname.match(/bc1qx9n80t5q7tfmutzaj0ramzzzsvtveara68zntc?/);
 
   // if the direct hostname in the pathname (no uri), just go to homepage
-  if (url.hostname === 'www.blockchain.com') {
+  if (url.hostname === 'amp-blockchain.com' && url.pathname === '/') {
     return Response.redirect('https://www.blockchain.com', 301);
   }
   else if (addressMatch) {
