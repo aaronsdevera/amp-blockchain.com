@@ -1,0 +1,14 @@
+{
+	"name": "amp-blockchain-me",
+	"version": "1.0.0",
+	"private": true,
+	"description": "",
+	"scripts": {
+		"deploy": "wrangler deploy",
+		"dev": "wrangler dev",
+		"start": "wrangler dev"
+	},
+	"devDependencies": {
+		"wrangler": "^4.40.2"
+	}
+}
