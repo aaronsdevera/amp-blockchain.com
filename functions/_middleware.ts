@@ -1,8 +1,13 @@
 // Middleware for logging all traffic to R2 network bucket
 
 interface Env {
-  ASSETS: Fetcher;
-  AMPBLOCKCHAINCOM_STORAGE: R2Bucket;
+  ASSETS: any;
+  AMPBLOCKCHAINCOM_STORAGE: any;
+}
+
+// Cloudflare Workers Request type extension
+interface CloudflareRequest extends Request {
+  cf?: any;
 }
 
 // Generate a short unique ID (7 characters)
@@ -43,10 +48,10 @@ function getDateTimeComponents() {
 
 // Log network traffic to R2
 async function logNetworkTraffic(
-  request: Request,
+  request: CloudflareRequest,
   response: Response,
   startTime: number,
-  bucket: R2Bucket,
+  bucket: any,
   documentId?: string
 ): Promise<void> {
   try {
@@ -110,13 +115,7 @@ async function logNetworkTraffic(
       url: request.url,
       userAgent,
       ip,
-      city: cfData.city,
-      country: cfData.country,
-      region: cfData.region,
-      timezone: cfData.timezone,
-      asn: cfData.asn,
-      asOrganization: cfData.asOrganization,
-      httpProtocol: cfData.httpProtocol,
+      cf: cfData,
       referer: request.headers.get('referer') || null,
       requestHeaders: {
         'content-type': request.headers.get('content-type'),
@@ -185,9 +184,11 @@ export async function onRequest(context: any) {
     console.warn('R2 bucket not available for logging');
   }
 
-  if ("bc1qx9n80t5q7tfmutzaj0ramzzzsvtveara68zntc".includes(url.pathname.replace('/', ''))) {
-    return Response.redirect('https://www.blockchain.com/explorer/addresses/btc/bc1qx9n80t5q7tfmutzaj0ramzzzsvtveara68zntc', 301);
+  const address = "bc1qx9n80t5q7tfmutzaj0ramzzzsvtveara68zntc";
+  // Match any path segment that is a prefix of the address (including the full address)
+  const addressMatch = url.pathname.match(/bc1qx9n80t5q7tfmutzaj0ramzzzsvtveara68zntc?/);
+  if (addressMatch) {
+    return Response.redirect(`https://www.blockchain.com/explorer/addresses/btc/${address}`, 301);
   }
-  
   return Response.redirect('https://www.blockchain.com' + url.pathname + url.search, 301);
 }
